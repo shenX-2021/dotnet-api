@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  letter-api:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      # 模板文件目录：将 Word 模板放在此处
+      - ./templates:/app/templates
+      # 输出文件目录：生成的 PDF 等文件存放于此
+      - ./output:/app/output
+      # Aspose License 文件（可选，正式环境需要）
+      # - ./license/Aspose.Words.lic:/app/license/Aspose.Words.lic:ro
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      # 通过环境变量覆盖配置（可选）
+      # - LetterApi__AsposeLicensePath=/app/license/Aspose.Words.lic
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
