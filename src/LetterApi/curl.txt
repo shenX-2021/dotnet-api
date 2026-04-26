@@ -1,0 +1,17 @@
+curl --location 'http://localhost:3000/letter/generate' \
+--header 'Content-Type: application/json' \
+--data '{
+  "TemplateFileName": "test.docx",
+  "MergeFields": {
+    "data1": "This is Merge Field data."
+  },
+  "Bookmarks": {
+    "QR-TEST":{
+      "Type": "qrcode",
+      "Options": {
+        "content": "https://baidu.com"
+      }
+    }
+  },
+  "OutputFormat": "pdf"
+}'
