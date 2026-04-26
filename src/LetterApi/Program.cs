@@ -18,29 +18,39 @@ builder.Services.AddSingleton<IBookmarkHandler, QrCodeBookmarkHandler>();
 
 var app = builder.Build();
 
-// 初始化 Aspose License
-InitializeAsposeLicense(app.Configuration);
+// 获取应用执行目录
+var appBasePath = Path.GetDirectoryName(Environment.ProcessPath) ?? AppContext.BaseDirectory;
 
 // 确保模板和输出目录存在
-var templatesPath = app.Configuration["LetterApi:TemplatesPath"] ?? "/app/templates";
-var outputPath = app.Configuration["LetterApi:OutputPath"] ?? "/app/output";
+var templatesPath = Path.Combine(appBasePath, "templates");
+var outputPath = Path.Combine(appBasePath, "output");
+var licensePath = Path.Combine(appBasePath, "Aspose.Words.lic");
 Directory.CreateDirectory(templatesPath);
 Directory.CreateDirectory(outputPath);
+
+// 初始化 Aspose License
+InitializeAsposeLicense(licensePath);
 
 app.MapControllers();
 app.Run();
 
-static void InitializeAsposeLicense(IConfiguration configuration)
+static void InitializeAsposeLicense(string licensePath)
 {
-    var licensePath = configuration["LetterApi:AsposeLicensePath"];
-    if (!string.IsNullOrWhiteSpace(licensePath) && File.Exists(licensePath))
+    if (File.Exists(licensePath))
     {
-        var license = new License();
-        license.SetLicense(licensePath);
-        Console.WriteLine($"Aspose license loaded from: {licensePath}");
+        try
+        {
+            var license = new License();
+            license.SetLicense(licensePath);
+            Console.WriteLine($"Aspose license loaded from: {licensePath}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to load Aspose license: {ex.Message} — running in evaluation mode");
+        }
     }
     else
     {
-        Console.WriteLine("Aspose license not configured — running in evaluation mode");
+        Console.WriteLine("Aspose license not found — running in evaluation mode");
     }
 }

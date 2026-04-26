@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspose.Words" />
+    <PackageReference Include="Aspose.Words" Version="25.1.0" />
     <PackageReference Include="QRCoder" Version="1.4.3" />
   </ItemGroup>
 
